@@ -10,6 +10,7 @@ module Control.Monad.ST.Run
   , runSmallArrayST
   , runByteArrayST
   , runPrimArrayST
+  , runSmallUnliftedArrayST
   , runUnliftedArrayST
 
     -- * Integral Types
@@ -47,6 +48,7 @@ import Data.Primitive.ByteArray (ByteArray (ByteArray))
 import Data.Primitive.PrimArray (PrimArray (PrimArray))
 import Data.Primitive.SmallArray (SmallArray (SmallArray))
 import Data.Primitive.Unlifted.Array (UnliftedArray_ (UnliftedArray))
+import Data.Primitive.Unlifted.SmallArray (SmallUnliftedArray_ (SmallUnliftedArray))
 import GHC.Exts (Char (C#), Double (D#), Float (F#), Int (I#), Word (W#), runRW#)
 import GHC.Int (Int16 (I16#), Int32 (I32#), Int8 (I8#))
 import GHC.ST (ST (ST))
@@ -71,6 +73,10 @@ runPrimArrayST f = PrimArray (runRW# (\s0 -> case f of ST g -> case g s0 of (# _
 runUnliftedArrayST :: (forall s. ST s (UnliftedArray_ unlifted_a a)) -> UnliftedArray_ unlifted_a a
 {-# INLINE runUnliftedArrayST #-}
 runUnliftedArrayST f = UnliftedArray (runRW# (\s0 -> case f of ST g -> case g s0 of (# _, UnliftedArray r #) -> r))
+
+runSmallUnliftedArrayST :: (forall s. ST s (SmallUnliftedArray_ unlifted_a a)) -> SmallUnliftedArray_ unlifted_a a
+{-# INLINE runSmallUnliftedArrayST #-}
+runSmallUnliftedArrayST f = SmallUnliftedArray (runRW# (\s0 -> case f of ST g -> case g s0 of (# _, SmallUnliftedArray r #) -> r))
 
 runCharST :: (forall s. ST s Char) -> Char
 {-# INLINE runCharST #-}
